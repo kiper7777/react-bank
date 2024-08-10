@@ -151,3 +151,167 @@ const SettingsPage = () => {
 };
 
 export default SettingsPage;
+
+
+// import React, { useState } from 'react';
+// import { useNavigate } from 'react-router-dom';
+// import BackButton from './BackButton';
+// import "./SettingsPage.css";
+
+// const SettingsPage = () => {
+//   const navigate = useNavigate();
+//   const [newEmail, setNewEmail] = useState('');
+//   const [emailOldPassword, setEmailOldPassword] = useState('');
+//   const [passwordOldPassword, setPasswordOldPassword] = useState('');
+//   const [newPassword, setNewPassword] = useState('');
+//   const [message, setMessage] = useState('');
+
+//   const handleNewEmailChange = (e) => setNewEmail(e.target.value);
+//   const handleEmailOldPasswordChange = (e) => setEmailOldPassword(e.target.value);
+//   const handlePasswordOldPasswordChange = (e) => setPasswordOldPassword(e.target.value);
+//   const handleNewPasswordChange = (e) => setNewPassword(e.target.value);
+
+//   const handleEmailSubmit = async (e) => {
+//     e.preventDefault();
+//     if (!validateEmail(newEmail)) {
+//       setMessage('Please enter a valid email address');
+//       return;
+//     }
+//     try {
+//       const response = await fetch('http://localhost:4000/update-email', {
+//         method: 'POST',
+//         headers: { 'Content-Type': 'application/json' },
+//         body: JSON.stringify({ newEmail, oldPassword: emailOldPassword }),
+//       });
+//       const data = await response.json();
+//       if (data.success) {
+//         setNewEmail('');
+//         setEmailOldPassword('');
+//         setMessage('Email updated successfully');
+//       } else {
+//         setMessage(data.error || 'Failed to update email');
+//       }
+//     } catch (error) {
+//       console.error('Error updating email:', error);
+//       setMessage('Failed to update email');
+//     }
+//   };
+
+//   const handlePasswordSubmit = async (e) => {
+//     e.preventDefault();
+//     if (!validatePassword(newPassword)) {
+//       setMessage('Password must be at least 8 characters long and contain at least one number and one letter');
+//       return;
+//     }
+//     try {
+//       const response = await fetch('http://localhost:4000/update-password', {
+//         method: 'POST',
+//         headers: { 'Content-Type': 'application/json' },
+//         body: JSON.stringify({ oldPassword: passwordOldPassword, newPassword }),
+//       });
+//       const data = await response.json();
+//       if (data.success) {
+//         setPasswordOldPassword('');
+//         setNewPassword('');
+//         setMessage('Password updated successfully');
+//       } else {
+//         setMessage(data.error || 'Failed to update password');
+//       }
+//     } catch (error) {
+//       console.error('Error updating password:', error);
+//       setMessage('Failed to update password');
+//     }
+//   };
+
+//   const handleLogout = () => {
+//     // Implement logout logic here (e.g., clear local storage, cookies, etc.)
+//     navigate('/signin');
+//   };
+
+//   const validateEmail = (email) => {
+//     const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+//     return re.test(String(email).toLowerCase());
+//   };
+
+//   const validatePassword = (password) => {
+//     const re = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+//     return re.test(password);
+//   };
+
+//   return (
+//     <div className='page__settings'>
+//       <div className='header'>
+//         <BackButton onClick={() => navigate(-1)} />
+//         <h1 className='header__settings-title'>Settings</h1>
+//       </div>
+
+//       <form className='form__settings' onSubmit={handleEmailSubmit}>
+//         <div className='field__settings'>
+//           <h6 className='field__settings-title'>Change email</h6>  
+//           <label className='field__settings-label' htmlFor="email">Email</label>
+//           <input
+//             id="email"
+//             className='field__input' 
+//             type="email" 
+//             placeholder='example@gmail.com'
+//             value={newEmail} 
+//             onChange={handleNewEmailChange} 
+//             required
+//           />
+//         </div>
+//         <div className='field__settings'>
+//           <label className='field__settings-label' htmlFor="emailOldPassword">Old Password</label>
+//           <input
+//             id="emailOldPassword"
+//             className='field__input' 
+//             type="password" 
+//             placeholder='********'
+//             value={emailOldPassword} 
+//             onChange={handleEmailOldPasswordChange} 
+//             required
+//           />
+//         </div>
+//         <button className='form__button-white' type="submit">Save Email</button>
+//       </form> 
+
+//       <hr className='divider'/> 
+      
+//       <form className='form__settings' onSubmit={handlePasswordSubmit}>
+//         <div className='field'>
+//           <h6 className='field__settings-title'>Change password</h6>  
+//           <label className='field__settings-label' htmlFor="passwordOldPassword">Old Password</label>
+//           <input
+//             id="passwordOldPassword"
+//             className='field__input' 
+//             type="password" 
+//             placeholder='********'
+//             value={passwordOldPassword}  
+//             onChange={handlePasswordOldPasswordChange}
+//             required
+//           />
+//         </div>
+//         <div className='field'>
+//           <label className='field__settings-label' htmlFor="newPassword">New Password</label>
+//           <input
+//             id="newPassword"
+//             className='field__input' 
+//             type="password"
+//             placeholder='********'
+//             value={newPassword}  
+//             onChange={handleNewPasswordChange} 
+//             required
+//           />
+//         </div>
+//         <button className='form__button-white' type="submit">Save Password</button>
+//       </form>
+
+//       <hr className='divider'/>
+
+//       <button className='form__button-red' onClick={handleLogout}>Log out</button>
+
+//       {message && <p className="message">{message}</p>}
+//     </div>
+//   );
+// };
+
+// export default SettingsPage;

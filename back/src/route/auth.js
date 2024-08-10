@@ -26,6 +26,12 @@ let users = [
     confirmed: true,
   },
 ]
+
+// // Простое хранилище данных в памяти (для демонстрационных целей)
+// const users = [
+//   { id: 1, email: 'user@example.com', password: 'password123' }
+// ];
+
 let recoveryCodes = {}
 
 // Функция для генерации случайного кода восстановления
@@ -586,6 +592,32 @@ router.post('/balance', function (req, res) {
 router.get('/users', (req, res) => {
   res.json(users)
 })
+
+//====================================================
+
+router.post('/settings', function (req, res) {
+  const { action, newEmail, oldPassword, newPassword } = req.body;
+  console.log(req.body);
+
+  // Находим пользователя (в реальном приложении здесь была бы проверка аутентификации)
+  const user = users[0];
+
+  if (action === 'updateEmail') {
+    if (oldPassword !== user.password) {
+      return res.status(400).json({ success: false, error: 'Invalid old password' });
+    }
+    user.email = newEmail;
+    res.json({ success: true, message: 'Email updated successfully' });
+  } else if (action === 'updatePassword') {
+    if (oldPassword !== user.password) {
+      return res.status(400).json({ success: false, error: 'Invalid old password' });
+    }
+    user.password = newPassword;
+    res.json({ success: true, message: 'Password updated successfully' });
+  } else {
+    res.status(400).json({ success: false, error: 'Invalid action' });
+  }
+});
 
 //======================================================
 // Підключаємо роутер до бек-енду
