@@ -593,6 +593,11 @@ router.get('/users', (req, res) => {
   res.json(users)
 })
 
+router.get('/user', (req, res) => {
+  const user = users[0]; // В реальном приложении здесь была бы проверка аутентификации
+  res.json(user);
+});
+
 //====================================================
 
 router.post('/settings', (req, res) => {

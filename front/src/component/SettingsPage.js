@@ -1,15 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import BackButton from './BackButton';
 import "./SettingsPage.css";
 
 const SettingsPage = () => {
   const navigate = useNavigate();
+  const [user, setUser] = useState(null);
   const [newEmail, setNewEmail] = useState('');
   const [emailOldPassword, setEmailOldPassword] = useState('');
   const [passwordOldPassword, setPasswordOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [message, setMessage] = useState('');
+
+  useEffect(() => {
+    fetchUser();
+  }, []);
+
+  const fetchUser = async () => {
+    try {
+      const response = await fetch('http://localhost:4000/user');
+      const data = await response.json();
+      setUser(data);
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
+  };
 
   const handleNewEmailChange = (e) => setNewEmail(e.target.value);
   const handleEmailOldPasswordChange = (e) => setEmailOldPassword(e.target.value);
@@ -29,6 +44,7 @@ const SettingsPage = () => {
         setNewEmail('');
         setEmailOldPassword('');
         setMessage('Email updated successfully');
+        fetchUser(); // Fetch updated user data
       } else {
         setMessage(data.error || 'Failed to update email');
       }
@@ -71,76 +87,85 @@ const SettingsPage = () => {
         <h1 className='header__settings-title'>Settings</h1>
       </div>
 
-      <form className='form__settings' onSubmit={handleEmailSubmit}>
-        <div className='field__settings'>
-          <h6 className='field__settings-title'>Change email</h6>  
-          <label className='field__settings-label' htmlFor="email">Email</label>
-          <input
-            id="email"
-            className='field__input' 
-            type="email" 
-            placeholder='example@gmail.com'
-            value={newEmail} 
-            onChange={handleNewEmailChange} 
-            required
-          />
-        </div>
-        <div className='field__settings'>
-          <label className='field__settings-label' htmlFor="emailOldPassword">Old Password</label>
-          <input
-            id="emailOldPassword"
-            className='field__input' 
-            type="password" 
-            placeholder='********'
-            value={emailOldPassword} 
-            onChange={handleEmailOldPasswordChange} 
-            required
-          />
-        </div>
-        <button className='form__button-white' type="submit">Save Email</button>
-      </form> 
+      {user && (
+        <>
+          <div className='user-info'>
+            <p>Email: {user.email}</p>
+          </div>
+          
+          <form className='form__settings' onSubmit={handleEmailSubmit}>
+            <div className='field__settings'>
+              <h6 className='field__settings-title'>Change email</h6>  
+              <label className='field__settings-label' htmlFor="email">Email</label>
+              <input
+                id="email"
+                className='field__input' 
+                type="email" 
+                placeholder='example@gmail.com'
+                value={newEmail} 
+                onChange={handleNewEmailChange} 
+                required
+              />
+            </div>
+            <div className='field__settings'>
+              <label className='field__settings-label' htmlFor="emailOldPassword">Old Password</label>
+              <input
+                id="emailOldPassword"
+                className='field__input' 
+                type="password" 
+                placeholder='********'
+                value={emailOldPassword} 
+                onChange={handleEmailOldPasswordChange} 
+                required
+              />
+            </div>
+            <button className='form__button-white' type="submit">Save Email</button>
+          </form> 
 
-      <hr className='divider'/> 
-      
-      <form className='form__settings' onSubmit={handlePasswordSubmit}>
-        <div className='field'>
-          <h6 className='field__settings-title'>Change password</h6>  
-          <label className='field__settings-label' htmlFor="passwordOldPassword">Old Password</label>
-          <input
-            id="passwordOldPassword"
-            className='field__input' 
-            type="password" 
-            placeholder='********'
-            value={passwordOldPassword}  
-            onChange={handlePasswordOldPasswordChange}
-            required
-          />
-        </div>
-        <div className='field'>
-          <label className='field__settings-label' htmlFor="newPassword">New Password</label>
-          <input
-            id="newPassword"
-            className='field__input' 
-            type="password"
-            placeholder='********'
-            value={newPassword}  
-            onChange={handleNewPasswordChange} 
-            required
-          />
-        </div>
-        <button className='form__button-white' type="submit">Save Password</button>
-      </form>
+          <hr className='divider'/> 
+          
+          <form className='form__settings' onSubmit={handlePasswordSubmit}>
+            <div className='field'>
+              <h6 className='field__settings-title'>Change password</h6>  
+              <label className='field__settings-label' htmlFor="passwordOldPassword">Old Password</label>
+              <input
+                id="passwordOldPassword"
+                className='field__input' 
+                type="password" 
+                placeholder='********'
+                value={passwordOldPassword}  
+                onChange={handlePasswordOldPasswordChange}
+                required
+              />
+            </div>
+            <div className='field'>
+              <label className='field__settings-label' htmlFor="newPassword">New Password</label>
+              <input
+                id="newPassword"
+                className='field__input' 
+                type="password"
+                placeholder='********'
+                value={newPassword}  
+                onChange={handleNewPasswordChange} 
+                required
+              />
+            </div>
+            <button className='form__button-white' type="submit">Save Password</button>
+          </form>
 
-      <hr className='divider'/>
+          <hr className='divider'/>
 
-      <button className='form__button-red' onClick={handleLogout}>Log out</button>
+          <button className='form__button-red' onClick={handleLogout}>Log out</button>
 
-      {message && <p className="message">{message}</p>}
+          {message && <p className="message">{message}</p>}
+        </>
+      )}
     </div>
   );
 };
 
 export default SettingsPage;
+
 
 
 
