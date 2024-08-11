@@ -1,97 +1,112 @@
-const createError = require('http-errors')
-const express = require('express')
-const path = require('path')
-const cookieParser = require('cookie-parser')
-const logger = require('morgan')
-const dotenv = require('dotenv')
+const express = require('express');
+const app = express();
+const mainRoutes = require('./src/route'); // убедитесь, что путь правильный
 
-// const webpack = require('webpack')
-// const webpackDevMiddleware = require('webpack-dev-middleware')
-// const webpackHotMiddleware = require('webpack-hot-middleware')
-// const config = require('./webpack.config.js')
+app.use(express.json());
 
-// const hbs = require('express-handlebars')
+// Использование основных маршрутов
+app.use('/', mainRoutes);
 
-// const compiler = webpack(config)
-const app = express()
+app.listen(3000, () => {
+  console.log('Server is running on http://localhost:3000');
+});
 
-dotenv.config()
 
-// app.use(
-//   webpackDevMiddleware(compiler, {
-//     publicPath: config.output.publicPath,
-//   }),
-// )
 
-// app.use(webpackHotMiddleware(compiler))
+// const createError = require('http-errors')
+// const express = require('express')
+// const path = require('path')
+// const cookieParser = require('cookie-parser')
+// const logger = require('morgan')
+// const dotenv = require('dotenv')
 
-// app.set('view engine', 'hbs')
-// app.set('views', 'src/container')
-// app.engine(
-//   'hbs',
-//   hbs.engine({
-//     extname: 'hbs',
-//     defaultLayout: 'default/index',
-//     layoutsDir: __dirname + '/src/layout/',
-//     partialsDir: {
-//       dir: __dirname + '/src/component/',
-//       rename: (filePath) => {
-//         return `${filePath.split('/')[0]}`
-//       },
-//     },
-//   }),
-// )
+// // const webpack = require('webpack')
+// // const webpackDevMiddleware = require('webpack-dev-middleware')
+// // const webpackHotMiddleware = require('webpack-hot-middleware')
+// // const config = require('./webpack.config.js')
 
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*')
-  res.header(
-    'Access-Control-Allow-Methods',
-    'GET, POST, PUT, DELETE',
-  )
-  res.header(
-    'Access-Control-Allow-Headers',
-    'Content-Type, Authorization',
-  )
-  next()
-})
+// // const hbs = require('express-handlebars')
 
-app.use(logger('dev'))
-app.use(express.json())
-app.use(express.urlencoded({ extended: false }))
-app.use(cookieParser())
-app.use(express.static(path.join(__dirname, 'public')))
+// // const compiler = webpack(config)
+// const app = express()
 
-if (process.env.NODE_ENV === 'development') {
-  const livereload = require('livereload')
-  const connectLiveReload = require('connect-livereload')
+// dotenv.config()
 
-  const liveReloadServer = livereload.createServer()
-  liveReloadServer.watch(path.join(__dirname, 'public'))
-  liveReloadServer.server.once('connection', () => {
-    setTimeout(() => {
-      liveReloadServer.refresh('/')
-    }, 100)
-  })
-  app.use(connectLiveReload())
-}
+// // app.use(
+// //   webpackDevMiddleware(compiler, {
+// //     publicPath: config.output.publicPath,
+// //   }),
+// // )
 
-const route = require('./src/route/index.js')
+// // app.use(webpackHotMiddleware(compiler))
 
-app.use('/', route)
-// catch 404 and forward to error handler
-app.use((req, res, next) => {
-  next(createError(404))
-})
+// // app.set('view engine', 'hbs')
+// // app.set('views', 'src/container')
+// // app.engine(
+// //   'hbs',
+// //   hbs.engine({
+// //     extname: 'hbs',
+// //     defaultLayout: 'default/index',
+// //     layoutsDir: __dirname + '/src/layout/',
+// //     partialsDir: {
+// //       dir: __dirname + '/src/component/',
+// //       rename: (filePath) => {
+// //         return `${filePath.split('/')[0]}`
+// //       },
+// //     },
+// //   }),
+// // )
 
-// error handler
-app.use((err, req, res, next) => {
-  // set locals, only providing error in development
-  res.locals.message = err.message
-  res.locals.error =
-    req.app.get('env') === 'development' ? err : {}
+// app.use((req, res, next) => {
+//   res.header('Access-Control-Allow-Origin', '*')
+//   res.header(
+//     'Access-Control-Allow-Methods',
+//     'GET, POST, PUT, DELETE',
+//   )
+//   res.header(
+//     'Access-Control-Allow-Headers',
+//     'Content-Type, Authorization',
+//   )
+//   next()
+// })
 
-  // render the error page
-  res.status(err.status || 500).json(err)
-})
+// app.use(logger('dev'))
+// app.use(express.json())
+// app.use(express.urlencoded({ extended: false }))
+// app.use(cookieParser())
+// app.use(express.static(path.join(__dirname, 'public')))
 
-module.exports = app
+// if (process.env.NODE_ENV === 'development') {
+//   const livereload = require('livereload')
+//   const connectLiveReload = require('connect-livereload')
+
+//   const liveReloadServer = livereload.createServer()
+//   liveReloadServer.watch(path.join(__dirname, 'public'))
+//   liveReloadServer.server.once('connection', () => {
+//     setTimeout(() => {
+//       liveReloadServer.refresh('/')
+//     }, 100)
+//   })
+//   app.use(connectLiveReload())
+// }
+
+// const route = require('./src/route/index.js')
+
+// app.use('/', route)
+// // catch 404 and forward to error handler
+// app.use((req, res, next) => {
+//   next(createError(404))
+// })
+
+// // error handler
+// app.use((err, req, res, next) => {
+//   // set locals, only providing error in development
+//   res.locals.message = err.message
+//   res.locals.error =
+//     req.app.get('env') === 'development' ? err : {}
+
+//   // render the error page
+//   res.status(err.status || 500).json(err)
+// })
+
+// module.exports = app
