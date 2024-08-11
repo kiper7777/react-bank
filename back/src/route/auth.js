@@ -595,12 +595,10 @@ router.get('/users', (req, res) => {
 
 //====================================================
 
-router.post('/settings', function (req, res) {
+router.post('/settings', (req, res) => {
   const { action, newEmail, oldPassword, newPassword } = req.body;
-  console.log(req.body);
 
-  // Находим пользователя (в реальном приложении здесь была бы проверка аутентификации)
-  const user = users[0];
+  const user = users[0]; // В реальном приложении здесь была бы проверка аутентификации
 
   if (action === 'updateEmail') {
     if (oldPassword !== user.password) {
