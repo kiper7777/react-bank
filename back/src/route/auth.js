@@ -39,6 +39,19 @@ const generateRecoveryCode = () => {
   return crypto.randomBytes(3).toString('hex') // Генерируем 6-значный код
 }
 
+let notifications = [];
+
+// Метод для добавления уведомлений
+const addNotification = (type, title, description) => {
+  const notification = {
+    type,
+    title,
+    description,
+    timestamp: new Date()
+  };
+  notifications.push(notification);
+};
+
 //============================================
 router.get('/signup', function (req, res) {
   return res.render('signup', {
@@ -620,6 +633,22 @@ router.post('/settings', (req, res) => {
   } else {
     res.status(400).json({ success: false, error: 'Invalid action' });
   }
+});
+
+// Маршрут для получения всех уведомлений
+router.get('/notifications', (req, res) => {
+  res.json(notifications);
+});
+
+// Пример маршрутов для добавления уведомлений
+router.post('/new-login', (req, res) => {
+  addNotification('login', 'New login', 'Someone logged into your account.');
+  res.status(200).send('Login notification added.');
+});
+
+router.post('/new-balance', (req, res) => {
+  addNotification('balance', 'Balance updated', 'New funds have been added to your account.');
+  res.status(200).send('Balance notification added.');
 });
 
 //======================================================
