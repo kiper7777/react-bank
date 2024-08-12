@@ -8,7 +8,7 @@ const NotificationsPage = () => {
   const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
-    const eventSource = new EventSource("http://localhost:4000/notifications/events");
+    const eventSource = new EventSource("http://localhost:3000/notifications/events");
     
     eventSource.onmessage = (event) => {
       const newNotification = JSON.parse(event.data);

@@ -1,4 +1,22 @@
-#!/usr/bin/env node
+// const express = require('express');
+// const app = express();
+// const port = 3000;
+
+// const mainRoutes = require('./src/route'); // Убедитесь, что путь правильный
+
+// app.use(express.json());
+
+// // Использование основных маршрутов
+// app.use('/', mainRoutes);
+
+// app.listen(port, () => {
+//   console.log(`Server is running on http://localhost:${port}`);
+// });
+
+// module.exports = app;
+
+
+// #!/usr/bin/env node
 
 /**
  * Module dependencies.

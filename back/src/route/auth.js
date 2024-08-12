@@ -1,7 +1,7 @@
 // Підключаємо роутер до бек-енду
-const express = require('express')
-const router = express.Router()
-const crypto = require('crypto')
+const express = require('express');
+const router = express.Router();
+const crypto = require('crypto');
 
 // Підключіть файли роутів
 // const { User } = require('../class/user')
@@ -9,7 +9,7 @@ const crypto = require('crypto')
 // const {Session} = require('../class/session')
 // const {SignupPageClass} = require('../class/SignupPageClass')
 
-let confirmationCodes = {} // Store confirmation codes keyed by email
+let confirmationCodes = {}; // Store confirmation codes keyed by email
 
 // let users = []; // Mock database for users
 
@@ -635,20 +635,35 @@ router.post('/settings', (req, res) => {
   }
 });
 
-// Маршрут для получения всех уведомлений
 router.get('/notifications', (req, res) => {
+  const notifications = [
+    { id: 1, type: 'login', title: 'New Login Detected', description: 'Someone logged in from a new device.', timestamp: '2024-08-09T12:34:56Z' },
+    { id: 2, type: 'payment', title: 'Payment Received', description: 'You received a payment of $100.', timestamp: '2024-08-09T12:35:56Z' },
+  ];
   res.json(notifications);
 });
 
-// Пример маршрутов для добавления уведомлений
-router.post('/new-login', (req, res) => {
-  addNotification('login', 'New login', 'Someone logged into your account.');
-  res.status(200).send('Login notification added.');
-});
+router.get('/notifications/events', (req, res) => {
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+  res.flushHeaders();
 
-router.post('/new-balance', (req, res) => {
-  addNotification('balance', 'Balance updated', 'New funds have been added to your account.');
-  res.status(200).send('Balance notification added.');
+  const intervalId = setInterval(() => {
+    const notification = {
+      id: new Date().getTime(),
+      type: 'login',
+      title: 'New Login Detected',
+      description: 'Someone logged in from a new device.',
+      timestamp: new Date().toISOString()
+    };
+    res.write(`data: ${JSON.stringify(notification)}\n\n`);
+  }, 10000);
+
+  req.on('close', () => {
+    clearInterval(intervalId);
+    res.end();
+  });
 });
 
 //======================================================
