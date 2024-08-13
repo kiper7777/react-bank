@@ -1,85 +1,43 @@
-// Підключаємо роутер до бек-енду
-const express = require('express')
-// створюємо роутер - місце, куди ми підключаємо ендпоїнти
-const router = express.Router()
+const express = require('express');
+const router = express.Router();
+const bcrypt = require('bcrypt');
 
-// Підключіть файли роутів
-const { User } = require('../class/user')
-// const {Confirm} = require('../class/confirm')
-// const {Session} = require('../class/session')
+let users = [
+  {
+    email: 'ivan@ukr.net',
+    password: '$2b$10$KIX6Q9YzFkG5XxZHmTWIw.ZJ8W9/I4DxKgf/FV3U1ET3T5Ym0hvF.', // хеш для "123"
+    confirmed: true,
+  },
+  {
+    email: 'pulka@inbox.eu',
+    password: '$2b$10$KIX6Q9YzFkG5XxZHmTWIw.ZJ8W9/I4DxKgf/FV3U1ET3T5Ym0hvF.', // хеш для "123"
+    confirmed: true,
+  },
+];
 
-//=================================
+router.post('/settings', async (req, res) => {
+  const { action, newEmail, oldPassword, newPassword } = req.body;
 
-router.get('/user-list', function (req, res) {
-    return res.render('user-list', {
-        name: 'user-list',
-        component: ['BackButton'],
-        title: 'User list page',
-        data: {},
-    })
-})
+  const user = users[0];
 
-router.get('/user-list-data', function (req, res) {
-    const list = User.getList()
-
-    console.log(list)
-
-    if (list.length === 0) {
-        return res.status(400).json({
-            message: "Список користувачів порожній",
-        })
+  if (action === 'updateEmail') {
+    const passwordMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!passwordMatch) {
+      return res.status(400).json({ success: false, error: 'Invalid old password' });
     }
-
-    return res.status(200).json({
-        list: list.map(({id, email}) => ({
-            id,
-            email,
-        })),
-    })
-})
-
-//=================================
-router.get('/user-item', function (req, res) {
-    return res.render('user-item', {
-        name: 'user-item',
-        component: [
-            'BackButton',
-            // 'field',
-            // 'field-password',
-        ],
-
-        title: 'User item page',
-        data: {},
-    })
-})
-
-router.get('/user-item-data', function (req, res) {
-    const {id} = req.query
-    // console.log(id)
-
-    if (!id) {
-        return res.status(400).json({
-            message: "Потрібно передати ID користувача",
-        })
+    user.email = newEmail;
+    res.json({ success: true, message: 'Email updated successfully' });
+  } else if (action === 'updatePassword') {
+    const passwordMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!passwordMatch) {
+      return res.status(400).json({ success: false, error: 'Invalid old password' });
     }
+    const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedNewPassword;
+    res.json({ success: true, message: 'Password updated successfully' });
+  } else {
+    res.status(400).json({ success: false, error: 'Invalid action' });
+  }
+});
 
-    const user = User.getById(Number(id))
-
-    if (!user) {
-        return res.status(400).json({
-            message: 'Користувач з таким ID не існує',
-        })
-    }
-
-    return res.status(200).json({
-        user: {
-            id: user.id,
-            email: user.email,
-            isConfirm: user.isConfirm,
-        },
-    })
-})
-
-//=================================
-// Підключаємо роутер до бек-енду
-module.exports = router
+module.exports = router;

@@ -1,7 +1,9 @@
 // Підключаємо роутер до бек-енду
 const express = require('express');
 const router = express.Router();
-const crypto = require('crypto');
+const bcrypt = require('bcrypt');
+
+const registeredUsers = new Set();
 
 // Підключіть файли роутів
 // const { User } = require('../class/user')
@@ -67,16 +69,18 @@ router.get('/signup', function (req, res) {
 router.post('/signup', (req, res) => {
   const { email, password } = req.body
 
-//   if (!email || !password) {
-//     return res
-//       .status(400)
-//       .json({ message: 'Email and password are required' })
-//   }
+  if (!email || !password) {
+    return res.status(400).json({ error: 'Email and password are required' });
+  }
 
-//   const existingUser = users.find((user) => user.email === email);
-//   if (existingUser) {
-//     return res.status(400).json({ message: 'User already exists' })
-//   }
+  if (registeredUsers.has(email)) {
+    return res.status(400).json({ error: 'User already exists' });
+  }
+
+  const hashedPassword = bcrypt.hash(password, 10);
+  registeredUsers.add({ email, password: hashedPassword });
+
+  res.status(200).json({ message: 'Registration successful' });
 
   // Generate confirmation code
   const confirmationCode = Math.floor(100000 + Math.random() * 900000).toString()
@@ -94,39 +98,7 @@ router.post('/signup', (req, res) => {
 
   // Send confirmation code back to the client for confirmation step
   res.json({ success: true, confirmationCode })
-})
-
-//=========================================================//
-// if (!email || !password) {
-//     return res.status(400).json({
-//         message: "Помилка. Обов'язкові поля відсутні",
-//     })
-// }
-
-// try {
-//     const user = User.getByEmail(email)
-
-//     if (user) {
-//         return res.status(400).json({
-//             message: "Помилка. Такий користувач вже існує",
-//         })
-//     }
-
-//     const newUser = User.create({email, password})
-
-//     const session = Session.create(newUser)
-
-//     confirm.create(newUser.email)
-
-//     return res.status(200).json({
-//         message: "Користувач успішно зареєстрований",
-//         session,
-//     })
-// } catch (err) {
-//     return res.status(400).json({
-//         message: "Помилка створення користувача",
-//     })
-// }
+});
 
 //============================================
 
@@ -167,84 +139,6 @@ router.post('/signup-confirm', (req, res) => {
       })
   }
 })
-
-// if (!email || !code) {
-//     return res.status(400).json({ success: false, error: 'Email and confirmation code are required' });
-// }
-
-// const storedCode = confirmationCodes[email];
-
-// if (storedCode !== code) {
-//     console.log('Invalid confirmation code:', code);
-//     return res.status(400).json({ success: false, error: 'Invalid confirmation code' });
-// }
-
-// console.log(`Account confirmed for ${email}`);
-// users[email].confirmed = true; // Mark user as confirmed
-// delete confirmationCodes[email]; // Remove code after successful confirmation
-// res.status(200).json({ success: true });
-
-//     // const {code, token} = req.body
-
-//     const { code } = req.body;
-//     console.log(req.body);
-
-//     // Find user by confirmation code
-// //   const user = users.find((user) => user.email === email);
-//   const user = users.find((user) => user.confirmationCode === code);
-
-//   if (user) {
-//     // Remove confirmation code after successful confirmation
-//     delete user.confirmationCode;
-//     res.json({ success: true });
-//   } else {
-//     res.status(400).json({ success: false, error: 'Invalid confirmation code' });
-//   }
-
-//=========================================//
-
-// if (!code || !token) {
-//     return res.status(400).json({
-//         message: "Помилка. Обов'язкові поля відсутні",
-//     })
-// }
-
-// try {
-//     const session = Session.get(token)
-
-//     if (!session) {
-//         return res.status(400).json({
-//             message: "Помилка. Ви не увійшли в акаунт",
-//         })
-//     }
-
-//     const email = Confirm.getData(code)
-
-//     if (!email) {
-//         return res.status(400).json({
-//             message: "Код не існує",
-//         })
-//     }
-
-//     if (email !== session.user.email) {
-//         return res.status(400).json({
-//             message: "Код не дійсний",
-//         })
-//     }
-
-//     const user = User.getByEmail(session.user.email)
-//     user.isConfirm = true
-//     session.user.isConfirm = true
-
-//     return res.status(200).json({
-//         message: "Ви підтвердили свою пошту",
-//         session,
-//     })
-// } catch (err) {
-//     return res.status(400).json({
-//         message: err.message,
-//     })
-// }
 
 //========================================================
 router.get('/signin', function (req, res) {
@@ -292,66 +186,6 @@ router.post('/signin', (req, res) => {
       })
   }
 })
-
-// Generate a token in a real application
-//   res.json({ success: true, message: 'Signed in successfully' });
-
-// if (!email || !password) {
-//     return res.status(400).json({ success: false, error: 'Email and password are required' });
-// }
-
-// const user = users[email];
-
-// if (!user) {
-//     return res.status(400).json({ success: false, error: 'Invalid email or password' });
-// }
-
-// if (!user.confirmed) {
-//     return res.status(400).json({ success: false, error: 'Account not confirmed' });
-// }
-
-// const isPasswordValid = await bcrypt.compare(password, user.password);
-
-// if (!isPasswordValid) {
-//     return res.status(400).json({ success: false, error: 'Invalid email or password' });
-// }
-
-// res.status(200).json({ success: true, token: 'dummy-token' });
-
-//===========================//
-
-// if (!email || !password) {
-//     return res.status(400).json({
-//         message: "Помилка. Обов'язкові поля відсутні",
-//     })
-// }
-
-// try {
-//     const user = User.getByEmail(email)
-
-//     if (!user) {
-//         return res.status(400).json({
-//             message: "Помилка. Користувач з таким email не існує",
-//         })
-//     }
-
-//     if (user.password !== password) {
-//         return res.status(400).json({
-//             message: "Помилка. Пароль не підходить",
-//         })
-//     }
-
-//     const session = Session.create(user)
-
-//     return res.status(200).json({
-//         message: "Ви увійшли",
-//         session,
-//     })
-// } catch (err) {
-//     return res.status(400).json({
-//         message: err.message,
-//     })
-// }
 
 //======================================================
 router.get('/recovery', function (req, res) {
@@ -414,46 +248,6 @@ router.post('/recovery', (req, res) => {
     })
 })
 
-// router.post('/recovery', (req, res) => {
-//     const { email } = req.body;
-//     // Ваша логика для отправки кода восстановления пароля по электронной почте
-//     const recoveryCode = generateRecoveryCode(); // Функция для генерации кода восстановления
-//     // Сохранение кода в базе данных или временном хранилище
-//     res.status(200).json({ success: true, confirmationCode: recoveryCode });
-//   });
-
-// router.post('/recovery', function (req, res) {
-//     const {email} = req.body
-
-//     console.log(email)
-
-//     if (!email) {
-//         return res.status(400).json({
-//             message: "Помилка. Обов'язкові поля відсутні",
-//         })
-//     }
-
-//     try {
-//         const user = User.getByEmail(email)
-
-//         if (!user) {
-//             return res.status(400).json({
-//                 message: "Користувач з таким email не існує",
-//             })
-//         }
-
-//         Confirm.create(email)
-
-//         return res.status(200).json({
-//             message: "Код для відновлення паролю відправлено",
-//         })
-//     } catch (err) {
-//         return res.status(400).json({
-//             message: err.message,
-//         })
-//     }
-// })
-
 //===================================================
 router.get('/recovery-confirm', function (req, res) {
   return res.render('recovery-confirm', {
@@ -508,78 +302,6 @@ router.post('/recovery-confirm', (req, res) => {
     })
 })
 
-// app.post('/recovery-confirm', (req, res) => {
-//     const { code, newPassword } = req.body;
-//     // Ваша логика для проверки кода восстановления и обновления пароля
-//     if (isValidRecoveryCode(code)) {
-//       // Обновление пароля в базе данных или временном хранилище
-//       res.status(200).json({ success: true, message: 'Password updated successfully' });
-//     } else {
-//       res.status(400).json({ success: false, error: 'Invalid recovery code' });
-//     }
-//   });
-
-// router.post('/recovery-confirm', function (req, res) {
-//     const {code, newPassword} = req.body
-//     console.log(code, newPassword)
-
-//     // Check if code and newPassword are provided
-//     if (!code || !newPassword) {
-//         return res.status(400).json({
-//             error: 'Code and newPassword are required'
-//             // message: "Помилка. Обов'язкові поля відсутні",
-//         })
-//     }
-
-//     try {
-//         const email = Confirm.getData(Number(code))
-
-//         if (!email) {
-//             return res.status(400).json({
-//                 message: "Код не існує",
-//             })
-//         }
-
-//         const user = User.getByEmail(email)
-
-//         if (!user) {
-//             return res.status(400).json({
-//                 message: "Користувач з таким email не існує",
-//             })
-//         }
-
-//         // Check if the code matches
-// //   const user = users.find((user) => user.confirmationCode === code);
-
-//   if (user) {
-//     // Update user's password
-//     user.password = newPassword;
-
-//     // Remove confirmation code
-//     delete user.confirmationCode;
-
-//     // Handle successful password restoration
-//     res.json({ success: true });
-//   } else {
-//     // Handle invalid code
-//     res.json({ success: false, error: 'Invalid confirmation code' });
-//   }
-
-//         console.log(user)
-
-//         const session = Session.create(user)
-
-//         return res.status(200).json({
-//             message: "Пароль змінено",
-//             session,
-//         })
-//     } catch (err) {
-//         return res.status(400).json({
-//             message: err.message,
-//         })
-//     }
-// })
-
 //========================================================
 router.get('/balance', function (req, res) {
   return res.render('balance', {
@@ -613,27 +335,27 @@ router.get('/user', (req, res) => {
 
 //====================================================
 
-router.post('/settings', (req, res) => {
-  const { action, newEmail, oldPassword, newPassword } = req.body;
+// router.post('/settings', (req, res) => {
+//   const { action, newEmail, oldPassword, newPassword } = req.body;
 
-  const user = users[0]; // В реальном приложении здесь была бы проверка аутентификации
+//   const user = users[0]; // В реальном приложении здесь была бы проверка аутентификации
 
-  if (action === 'updateEmail') {
-    if (oldPassword !== user.password) {
-      return res.status(400).json({ success: false, error: 'Invalid old password' });
-    }
-    user.email = newEmail;
-    res.json({ success: true, message: 'Email updated successfully' });
-  } else if (action === 'updatePassword') {
-    if (oldPassword !== user.password) {
-      return res.status(400).json({ success: false, error: 'Invalid old password' });
-    }
-    user.password = newPassword;
-    res.json({ success: true, message: 'Password updated successfully' });
-  } else {
-    res.status(400).json({ success: false, error: 'Invalid action' });
-  }
-});
+//   if (action === 'updateEmail') {
+//     if (oldPassword !== user.password) {
+//       return res.status(400).json({ success: false, error: 'Invalid old password' });
+//     }
+//     user.email = newEmail;
+//     res.json({ success: true, message: 'Email updated successfully' });
+//   } else if (action === 'updatePassword') {
+//     if (oldPassword !== user.password) {
+//       return res.status(400).json({ success: false, error: 'Invalid old password' });
+//     }
+//     user.password = newPassword;
+//     res.json({ success: true, message: 'Password updated successfully' });
+//   } else {
+//     res.status(400).json({ success: false, error: 'Invalid action' });
+//   }
+// });
 
 router.get('/notifications', (req, res) => {
   const notifications = [
