@@ -7,13 +7,13 @@ import SignupPage from "./component/SignupPage";
 import BalancePage from "./component/BalancePage";
 import SendPage from "./component/SendPage";
 import ReceivePage from "./component/ReceivePage";
-import { BalanceProvider } from "./component/BalanceContext";
 import TransactionPage from "./component/TransactionPage";
 import RecoveryPage from "./component/RecoveryPage";
 import RecoveryConfirmPage from "./component/RecoveryConfirmPage";
 import UsersList from "./component/UserList";
 import SettingsPage from "./component/SettingsPage";
 import NotificationsPage from "./component/NotificationsPage";
+import { BalanceProvider } from "./component/BalanceContext";
 
 const App = () => {
   return (
